@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
       ChangeNotifierProvider(create: (context)=>ProductProvider()),
     ],child: MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'The Flutter Way - Foodly UI Kit',
+      title: 'Food App',
       theme: AppThemeData.lightThemeData,
 
       home: const OnboardingScreen(),
