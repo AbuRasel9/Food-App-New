@@ -31,9 +31,9 @@ class _BigCardImageSlideState extends State<BigCardImageSlide> {
                 intialIndex = value;
               });
             },
-            itemCount: widget.images.length,
+            itemCount: 10,
             itemBuilder: (context, index) =>
-                BigCardImage(image: widget.images[index]),
+                BigCardImage(image: "https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg"),
           ),
           Positioned(
             bottom: defaultPadding,

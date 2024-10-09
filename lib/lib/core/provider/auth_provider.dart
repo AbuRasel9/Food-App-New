@@ -8,6 +8,7 @@ import '../dataModel/auth/login_request.dart';
 import '../service/service_locator.dart';
 
 class AuthProvider extends ChangeNotifier {
+
    final sharePrefsService=di.get<SharePrefs>();
   //<<-------------->> variable <<-------------->>//
 
@@ -31,10 +32,11 @@ class AuthProvider extends ChangeNotifier {
       loginRequest: request,
 
     );
-    return result;
     sharePrefsService.setToken(value: result.token ?? "");
     _loginResponse =result;
-        notifyListeners();
+    notifyListeners();
+    return result;
+
   }
 
 }

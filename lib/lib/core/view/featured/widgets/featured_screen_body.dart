@@ -4,10 +4,13 @@ import '../../../../common/cards/big/restaurant_info_big_card.dart';
 import '../../../../common/scalton/big_card_scalton.dart';
 import '../../../../utils/constants.dart';
 import '../../../../utils/demoData.dart';
+import '../../../dataModel/product/popular_product_response.dart';
 import '../../details/details_screen.dart';
 
 class FeaturedScreenBody extends StatefulWidget {
-  const FeaturedScreenBody({super.key});
+  final List<Product>? product;
+
+  const FeaturedScreenBody({super.key, this.product});
 
   @override
   _FeaturedScreenBodyState createState() => _FeaturedScreenBodyState();

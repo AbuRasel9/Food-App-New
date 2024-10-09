@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:foodly_ui/lib/core/provider/auth_provider.dart';
+import 'package:foodly_ui/lib/core/provider/product_provider.dart';
 import 'package:foodly_ui/lib/core/service/service_locator.dart';
 import 'package:foodly_ui/lib/utils/constants.dart';
 import 'package:foodly_ui/lib/utils/theme/app_theme_data.dart';
@@ -20,7 +21,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(providers: [
-      ChangeNotifierProvider(create: (context)=>AuthProvider())
+      ChangeNotifierProvider(create: (context)=>AuthProvider()),
+      ChangeNotifierProvider(create: (context)=>ProductProvider()),
     ],child: MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'The Flutter Way - Foodly UI Kit',

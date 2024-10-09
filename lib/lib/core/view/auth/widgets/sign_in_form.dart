@@ -34,12 +34,15 @@ class _SignInFormState extends State<SignInForm> {
       ),
     );
     authProvider.setLoading(value: false);
-    if (result.token == null || result.token == "") {
+    if (result.token?.isNotEmpty ?? false || result.token == "") {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Login Successful")));
 
       Navigator.push(
           context, MaterialPageRoute(builder: (context) => const EntryPoint()));
+    }else{
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Login Failed")));
     }
   }
 

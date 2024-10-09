@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:foodly_ui/lib/core/dataModel/product/popular_product_response.dart';
 import 'widgets/featured_screen_body.dart';
 
 class FeaturedScreen extends StatelessWidget {
-  const FeaturedScreen({super.key});
+  final List<Product>? product;
+
+  const FeaturedScreen({super.key, this.product});
 
   @override
   Widget build(BuildContext context) {
@@ -10,7 +13,7 @@ class FeaturedScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Featured Partners"),
       ),
-      body: const FeaturedScreenBody(),
+      body: FeaturedScreenBody(product: product,),
     );
   }
 }

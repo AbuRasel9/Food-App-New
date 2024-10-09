@@ -1,30 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:foodly_ui/lib/core/dataModel/product/popular_product_response.dart';
 import '../../../../common/cards/medium/restaurant_info_medium_card.dart';
 import '../../../../common/scalton/medium_card_scalton.dart';
 import '../../../../utils/constants.dart';
 import '../../../../utils/demoData.dart';
 import '../../details/details_screen.dart';
 
-class MediumCardList extends StatefulWidget {
-  const MediumCardList({
-    super.key,
+class PopularProduct extends StatefulWidget {
+  final List<Product> product;
+  const PopularProduct({
+    super.key, required this.product,
   });
 
   @override
-  _MediumCardListState createState() => _MediumCardListState();
+  _PopularProductState createState() => _PopularProductState();
 }
 
-class _MediumCardListState extends State<MediumCardList> {
-  bool isLoading = true;
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() {
-        isLoading = false;
-      });
-    });
-  }
+class _PopularProductState extends State<PopularProduct> {
+
 
   @override
   Widget build(BuildContext context) {
@@ -36,20 +29,18 @@ class _MediumCardListState extends State<MediumCardList> {
         SizedBox(
           width: double.infinity,
           height: 254,
-          child: isLoading
-              ? buildFeaturedPartnersLoadingIndicator()
-              : ListView.builder(
+          child:  ListView.builder(
                   scrollDirection: Axis.horizontal,
-                  itemCount: data.length,
+                  itemCount: widget.product.length ?? 0,
                   itemBuilder: (context, index) => Padding(
                     padding: EdgeInsets.only(
                       left: defaultPadding,
                       right: (data.length - 1) == index ? defaultPadding : 0,
                     ),
                     child: RestaurantInfoMediumCard(
-                      image: data[index]['image'],
-                      name: data[index]['name'],
-                      location: data[index]['location'],
+                      image:/* widget.product[index].img ?? ""*/"https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg",
+                      name: widget.product[index].name ?? "",
+                      location:widget.product[index].location ?? "",
                       delivertTime: 25,
                       rating: 4.6,
                       press: () {

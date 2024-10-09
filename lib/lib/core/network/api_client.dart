@@ -1,87 +1,227 @@
+// import 'dart:convert';
+// import 'package:foodly_ui/lib/core/data/sharePrefs/share_prefs.dart';
+// import 'package:foodly_ui/lib/core/dataModel/auth/login_request.dart';
+// import 'package:foodly_ui/lib/core/dataModel/auth/login_response.dart';
+// import 'package:dio/dio.dart';
+// import 'package:foodly_ui/lib/utils/api_consts.dart';
+// import 'package:http/http.dart' as http;
+//
+// import '../service/service_locator.dart';
+//
+// class ApiClient {
+//   final sharePrefsDi = di.get<SharePrefs>();
+//   Dio _dio = Dio();
+//
+//
+//   ApiClient()
+//       : _dio = Dio(BaseOptions(
+//     headers: {
+//   "Content-Type": "Application/json",
+//   "Accept": "Application/json",
+//   },
+//     baseUrl: AppApiConstants.baseUrl,
+//     connectTimeout: const Duration(
+//       minutes: 5,
+//     ),
+//     receiveTimeout: const Duration(
+//       minutes: 5,
+//     ),
+//   ));
+//
+//   //post api call
+//   Future<Response> post(
+//       {required String apiEndPoint, required Map<String, dynamic> request, Map<
+//           String,
+//           dynamic>? queryParameters,
+//         Options? options,
+//         CancelToken? cancelToken,
+//         ProgressCallback? onSendProgress,
+//         ProgressCallback? onReceiveProgress,}) async {
+//     print(
+//         "---------------api ${AppApiConstants.baseUrl +
+//             AppApiConstants.loginUrl}");
+//
+//     try {
+//       Response response = await _dio.post(
+//         apiEndPoint,
+//         data: request,
+//         queryParameters: queryParameters,
+//         options: options,
+//         cancelToken: cancelToken,
+//         onSendProgress: onSendProgress,
+//         onReceiveProgress: onReceiveProgress,
+//       );
+//       print("---------------response ${response.data}");
+//       return response;
+//     } catch (e) {
+//       throw Exception("Api call error ---${e}");
+//     }
+//   }
+//
+//   //post api call
+//   Future<Response> get({required String apiEndPoint,
+//     Map<String,dynamic>  ? queryParameters,
+//     Options? options,
+//     CancelToken? cancelToken,
+//     ProgressCallback? onSendProgress,
+//     ProgressCallback? onReceiveProgress,}) async {
+//     print(
+//         "---------------api ${AppApiConstants.baseUrl +
+//             AppApiConstants.loginUrl}");
+//
+//     try {
+//       Response response = await _dio.get(
+//         apiEndPoint,
+//         queryParameters: queryParameters,
+//         options: options,
+//         cancelToken: cancelToken,
+//
+//         onReceiveProgress: onReceiveProgress,
+//       );
+//       print("---------------response ${response.data}");
+//       return response;
+//     } catch (e) {
+//       throw Exception("Api call error ---${e}");
+//     }
+//   }
+// }
 import 'dart:convert';
+import 'dart:developer';
+import 'package:foodly_ui/lib/core/data/sharePrefs/share_prefs.dart';
 import 'package:foodly_ui/lib/core/dataModel/auth/login_request.dart';
 import 'package:foodly_ui/lib/core/dataModel/auth/login_response.dart';
 import 'package:dio/dio.dart';
+import 'package:foodly_ui/lib/core/network/custom_log_intercepter.dart';
 import 'package:foodly_ui/lib/utils/api_consts.dart';
-import 'package:http/http.dart'as http;
+import '../service/service_locator.dart';
 
 class ApiClient {
-  final String? baseUrl;
+  final sharePrefsDi = di.get<SharePrefs>();
+  late Dio _dio;
 
-  ApiClient([this.baseUrl]);
+  ApiClient() {
+    _dio = Dio(BaseOptions(
+      headers: {
+        "Content-Type": "Application/json",
+        "Accept": "Application/json",
+      },
+      baseUrl: AppApiConstants.baseUrl,
+      connectTimeout: const Duration(minutes: 5),
+      receiveTimeout: const Duration(minutes: 5),
+    ));
 
-  final Dio _dio = Dio();
+    // Add interceptors for logging
+    _dio.interceptors.add(CustomLogInterceptor(),);
+  }
 
-  //login api call
-  Future<Response> post(Map<String,dynamic> request) async {
-    try{
-
+  // POST API call
+  Future<Response> post({
+    required String apiEndPoint,
+    required Map<String, dynamic> request,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onSendProgress,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    try {
       Response response = await _dio.post(
-          AppApiConstants.baseUrl + AppApiConstants.loginUrl,
-          options: Options(
-              headers:{
-                "Content-Type":"Application/json",
-                "Accept":"Application/json",
-
-              }
-
-          ),
-          data: request,
+        apiEndPoint,
+        data: request,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
       );
-      if(response.statusCode==200){
-        return response.data ;
-      }else{
-        throw Exception("Api call error ${response.statusCode}");
-      }
-
-    }catch(e){
-      throw Exception("Api call error ${e}");
-
-
+      return response;
+    } catch (e) {
+      throw Exception(" API call error: $e");
     }
   }
 
-  Future<Map<String, dynamic>> get(
-      {String? customBaseUrl,
-      required String endpoint,
-      Map<String, String>? headers}) async {
-    final response = await http.get(
-      Uri.parse('${customBaseUrl ?? baseUrl}$endpoint'),
-      headers: headers ?? {'Content-Type': 'application/json'},
-    );
-    return _processResponse(response);
+  // GET API call
+  Future<Response> get({
+    required String apiEndPoint,
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+    ProgressCallback? onReceiveProgress,
+  }) async {
+    try {
+      Response response = await _dio.get(
+        apiEndPoint,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onReceiveProgress: onReceiveProgress,
+      );
+      return response;
+    } catch (e) {
+      throw Exception("API call error: $e");
+    }
   }
 
 
 
+
+
+  ///Put Method
   Future<Map<String, dynamic>> put(
-      {String? customBaseUrl,
-      required String endpoint,
-      Map<String, String>? headers,
-      dynamic body}) async {
-    final response = await http.put(
-      Uri.parse('${customBaseUrl ?? baseUrl}$endpoint'),
-      headers: headers ?? {'Content-Type': 'application/json'},
-      body: json.encode(body),
-    );
-    return _processResponse(response);
+      String path, {
+        data,
+        Map<String, dynamic>? queryParameters,
+        Options? options,
+        CancelToken? cancelToken,
+        ProgressCallback? onSendProgress,
+        ProgressCallback? onReceiveProgress
+      }) async{
+    try{
+      final Response response = await _dio.put(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+        onSendProgress: onSendProgress,
+        onReceiveProgress: onReceiveProgress,
+      );
+      if(response.statusCode == 200){
+        return response.data;
+      }
+      throw "something went wrong";
+    } catch (e){
+      rethrow;
+    }
   }
 
-  Future<Map<String, dynamic>> delete(
-      {String? customBaseUrl,
-      required String endpoint,
-      Map<String, String>? headers}) async {
-    final response = await http.delete(
-        Uri.parse('${customBaseUrl ?? baseUrl}$endpoint'),
-        headers: headers);
-    return _processResponse(response);
-  }
 
-  Future<Map<String, dynamic>> _processResponse(http.Response response) async {
-    if (response.statusCode >= 200 && response.statusCode < 300) {
-      return json.decode(response.body);
-    } else {
-      throw Exception('Error: ${response.statusCode} - ${response.body}');
+
+  ///Delete Method
+  Future<dynamic> delete(
+      String path, {
+        data,
+        Map<String, dynamic>? queryParameters,
+        Options? options,
+        CancelToken? cancelToken,
+        ProgressCallback? onSendProgress,
+        ProgressCallback? onReceiveProgress
+      }) async{
+    try{
+      final Response response = await _dio.delete(
+        path,
+        data: data,
+        queryParameters: queryParameters,
+        options: options,
+        cancelToken: cancelToken,
+
+      );
+      if(response.statusCode == 204){
+        return response.data;
+      }
+      throw "something went wrong";
+    } catch (e){
+      rethrow;
     }
   }
 }

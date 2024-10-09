@@ -29,6 +29,7 @@ class _SignInScreenState extends State<SignInScreen> {
           padding: EdgeInsets.symmetric(horizontal: defaultPadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               WelcomeText(
                 title: "Welcome to Hewkai",

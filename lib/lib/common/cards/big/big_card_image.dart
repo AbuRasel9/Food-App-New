@@ -11,11 +11,12 @@ class BigCardImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.only(right: 5,),
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(12)),
         image: DecorationImage(
           // for newtowk image use NetworkImage()
-          image: AssetImage(image),
+          image: NetworkImage(image),
           fit: BoxFit.cover,
         ),
       ),

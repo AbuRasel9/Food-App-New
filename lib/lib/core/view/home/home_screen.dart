@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:foodly_ui/lib/core/provider/product_provider.dart';
+import 'package:foodly_ui/lib/core/view/auth/widgets/sign_in_form.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import '../../../common/cards/big/big_card_image_slide.dart';
 import '../../../common/cards/big/restaurant_info_big_card.dart';
 import '../../../common/section_title.dart';
@@ -10,7 +13,6 @@ import '../details/details_screen.dart';
 import '../featured/featurred_screen.dart';
 import 'widgets/medium_card_list.dart';
 
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -19,29 +21,27 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  String locationStr = "loading...";
-
-  _HomeScreenState() {
-
+  void fetchPopularProduct() async {
+    final productProvider = context.read<ProductProvider>();
+    productProvider.setLoading(value: true);
+    await productProvider.getProductList();
+    productProvider.setLoading(value: false);
   }
 
-
-
-  Future<String> reverseSearchLocation(double lat, double lon) async {
-    http.Response res = await http.get(
-        Uri.parse(
-            "https://nominatim.openstreetmap.org/reverse?lat=$lat&lon=$lon&format=jsonv2&accept-language=th"),
-        headers: {'Accept-Language': 'th'});
-    dynamic json = jsonDecode(res.body);
-    print(json);
-    String output =
-        "${json['address']['road']}, ${json['address']['neighbourhood']}, ${json['address']['city']}";
-
-    return output;
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        fetchPopularProduct();
+      },
+    );
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final productProvider = Provider.of<ProductProvider>(context);
     return Scaffold(
       appBar: AppBar(
         leading: Container(
@@ -51,26 +51,12 @@ class _HomeScreenState extends State<HomeScreen> {
             child: FittedBox(
               fit: BoxFit.cover,
               child: Image.network(
-                    'https://www.ilovejapantours.com/images/easyblog_articles/6/doraemon-gadget-cat-from-the-future-wallpaper-4.jpg',
+                'https://www.ilovejapantours.com/images/easyblog_articles/6/doraemon-gadget-cat-from-the-future-wallpaper-4.jpg',
               ),
             ),
           ),
         ),
-        title: Column(
-          children: [
-            Text(
-              "Delivery to".toUpperCase(),
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall!
-                  .copyWith(color: primaryColor),
-            ),
-            Text(
-              locationStr,
-              style: const TextStyle(color: Colors.black),
-            )
-          ],
-        ),
+        title: const Text("Home Screen"),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -88,12 +74,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 press: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const FeaturedScreen(),
+                    builder: (context) => FeaturedScreen(
+                      product: productProvider.productList,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: defaultPadding),
-              const MediumCardList(),
+              Text(
+                "POPULAR PRODUCT",
+                style: theme.textTheme.titleLarge,
+              ),
+               PopularProduct(product: productProvider.productList ?? [],),
               const SizedBox(height: 20),
               // Banner
               // const PromotionBanner(), หน้าโปรโมชั่น
@@ -108,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              const MediumCardList(),
+               PopularProduct(product: productProvider.productList ?? [],),
               const SizedBox(height: 20),
               SectionTitle(title: "All Restaurants", press: () {}),
               const SizedBox(height: 16),
@@ -118,7 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: demoMediumCardData.map((restaurant) {
                   return Padding(
                     padding: const EdgeInsets.fromLTRB(
-                      defaultPadding, 0, defaultPadding, defaultPadding),
+                        defaultPadding, 0, defaultPadding, defaultPadding),
                     child: RestaurantInfoBigCard(
                       // Use demoBigImages list
                       images: [restaurant["image"]],
@@ -145,4 +137,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

@@ -36,7 +36,7 @@ class _PromotionBannerState extends State<PromotionBanner> {
             )
           : ClipRRect(
               borderRadius: const BorderRadius.all(Radius.circular(12)),
-              child: Image.asset("assets/images/Banner.png"),
+              child: Image.network("https://www.foodiesfeed.com/wp-content/uploads/2023/06/burger-with-melted-cheese.jpg"),
             ),
     );
   }
