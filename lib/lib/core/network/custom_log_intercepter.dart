@@ -20,9 +20,7 @@ class CustomLogInterceptor extends InterceptorsWrapper {
   @override
   void onError(DioException err, ErrorInterceptorHandler handler) {
     log("❌ Error occurred: ${err.response?.statusCode} ${err.message}");
-    if (err.response != null) {
-      log("❌ Error response data: ${err.response?.data}");
-    }
+
     super.onError(err, handler); // Continue with the error
   }
 }

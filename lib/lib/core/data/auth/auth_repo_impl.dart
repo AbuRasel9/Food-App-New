@@ -3,6 +3,7 @@ part of 'auth_repo.dart';
 class AuthRepoImpl extends AuthRepo {
   @override
   Future<LoginResponse> fetchLogin({required LoginRequest loginRequest}) async {
+
     try {
       final loginResponse = await authService.post( request:loginRequest.toJson(), apiEndPoint: AppApiConstants.loginUrl);
 

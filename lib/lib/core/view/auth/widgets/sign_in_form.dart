@@ -25,24 +25,35 @@ class _SignInFormState extends State<SignInForm> {
 
   void login() async {
     final authProvider = context.read<AuthProvider>();
-    authProvider.setLoading(value: true);
-    final result = await authProvider.getLogin(
-      request: LoginRequest(
-        phone: _phoneController.text,
-        email: _emailController.text,
-        password: _passwordController.text,
-      ),
-    );
-    authProvider.setLoading(value: false);
-    if (result.token?.isNotEmpty ?? false || result.token == "") {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Login Successful")));
 
-      Navigator.push(
-          context, MaterialPageRoute(builder: (context) => const EntryPoint()));
-    }else{
+    try{
+
+      authProvider.setLoading(value: true);
+      final result = await authProvider.getLogin(
+        request: LoginRequest(
+          phone: _phoneController.text,
+          email: _emailController.text,
+          password: _passwordController.text,
+        ),
+      );
+      authProvider.setLoading(value: false);
+      if (result.token?.isNotEmpty ?? false || result.token == "") {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Login Successful")));
+
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => const EntryPoint()));
+      }else{
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Login Failed")));
+      }
+    }catch(e){
+      authProvider.setLoading(value: false);
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Login Failed")));
+
+
+
     }
   }
 
@@ -56,7 +67,8 @@ class _SignInFormState extends State<SignInForm> {
           TextFormField(
             controller: _phoneController,
             validator: phoneNumberValidator,
-            onSaved: (value) {},
+            onSaved: (value) {
+            },
             textInputAction: TextInputAction.next,
             keyboardType: TextInputType.phone,
             decoration: const InputDecoration(hintText: "Phone Number"),
