@@ -150,6 +150,7 @@ class ApiClient {
   }) async {
     try {
       Response response = await _dio.get(
+
         apiEndPoint,
         queryParameters: queryParameters,
         options: options,
